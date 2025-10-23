@@ -1,4 +1,5 @@
-﻿// D:\Unreal Projects\YCR\Source\YCR\Public\GAS\YCRAttributeSet.h
+﻿// Copyright YCR Project
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -6,7 +7,7 @@
 #include "AbilitySystemComponent.h"
 #include "YCRAttributeSet.generated.h"
 
-// Macro helper for attribute accessors
+// Makros für Attribute Accessors
 #define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
     GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
     GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
@@ -14,8 +15,8 @@
     GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
 /**
- * Attribute set for YCR characters
- * Contains all gameplay attributes like health, damage, speed etc.
+ * Basis AttributeSet für alle YCR Charaktere
+ * Enthält alle grundlegenden Stats inspiriert von Ragnarok Online
  */
 UCLASS()
 class YCR_API UYCRAttributeSet : public UAttributeSet
@@ -25,23 +26,8 @@ class YCR_API UYCRAttributeSet : public UAttributeSet
 public:
     UYCRAttributeSet();
 
-    // Replication
-    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
     // =====================================================
-    // Vital Attributes
-    // =====================================================
-    
-    UPROPERTY(BlueprintReadOnly, Category = "Health", ReplicatedUsing = OnRep_Health)
-    FGameplayAttributeData Health;
-    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, Health)
-
-    UPROPERTY(BlueprintReadOnly, Category = "Health", ReplicatedUsing = OnRep_MaxHealth)
-    FGameplayAttributeData MaxHealth;
-    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, MaxHealth)
-
-    // =====================================================
-    // Primary Attributes (Ragnarok Style)
+    // Primäre Attribute (Ragnarok Style)
     // =====================================================
     
     UPROPERTY(BlueprintReadOnly, Category = "Primary Attributes")
@@ -68,11 +54,119 @@ public:
     FGameplayAttributeData Luck;
     ATTRIBUTE_ACCESSORS(UYCRAttributeSet, Luck)
 
-protected:
-    // Replication functions
-    UFUNCTION()
-    virtual void OnRep_Health(const FGameplayAttributeData& OldHealth);
+    // =====================================================
+    // Lebenspunkte
+    // =====================================================
+    
+    UPROPERTY(BlueprintReadOnly, Category = "Health")
+    FGameplayAttributeData Health;
+    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, Health)
 
-    UFUNCTION()
-    virtual void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth);
+    UPROPERTY(BlueprintReadOnly, Category = "Health")
+    FGameplayAttributeData MaxHealth;
+    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, MaxHealth)
+
+    UPROPERTY(BlueprintReadOnly, Category = "Health")
+    FGameplayAttributeData HealthRegeneration;
+    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, HealthRegeneration)
+
+    // =====================================================
+    // Kampfwerte
+    // =====================================================
+    
+    UPROPERTY(BlueprintReadOnly, Category = "Combat")
+    FGameplayAttributeData PhysicalDamage;
+    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, PhysicalDamage)
+
+    UPROPERTY(BlueprintReadOnly, Category = "Combat")
+    FGameplayAttributeData MagicalDamage;
+    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, MagicalDamage)
+
+    UPROPERTY(BlueprintReadOnly, Category = "Combat")
+    FGameplayAttributeData AttackSpeed;
+    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, AttackSpeed)
+
+    UPROPERTY(BlueprintReadOnly, Category = "Combat")
+    FGameplayAttributeData CriticalChance;
+    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, CriticalChance)
+
+    UPROPERTY(BlueprintReadOnly, Category = "Combat")
+    FGameplayAttributeData CriticalDamageMultiplier;
+    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, CriticalDamageMultiplier)
+
+    UPROPERTY(BlueprintReadOnly, Category = "Combat")
+    FGameplayAttributeData Defense;
+    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, Defense)
+
+    UPROPERTY(BlueprintReadOnly, Category = "Combat")
+    FGameplayAttributeData MagicDefense;
+    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, MagicDefense)
+
+    // =====================================================
+    // Bewegung
+    // =====================================================
+    
+    UPROPERTY(BlueprintReadOnly, Category = "Movement")
+    FGameplayAttributeData MovementSpeed;
+    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, MovementSpeed)
+
+    UPROPERTY(BlueprintReadOnly, Category = "Movement")
+    FGameplayAttributeData DodgeChance;
+    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, DodgeChance)
+
+    // =====================================================
+    // Vampire Survivors Style Attribute
+    // =====================================================
+    
+    UPROPERTY(BlueprintReadOnly, Category = "Survivor")
+    FGameplayAttributeData PickupRadius;
+    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, PickupRadius)
+
+    UPROPERTY(BlueprintReadOnly, Category = "Survivor")
+    FGameplayAttributeData ExperienceMultiplier;
+    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, ExperienceMultiplier)
+
+    UPROPERTY(BlueprintReadOnly, Category = "Survivor")
+    FGameplayAttributeData GoldFindMultiplier;
+    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, GoldFindMultiplier)
+
+    UPROPERTY(BlueprintReadOnly, Category = "Survivor")
+    FGameplayAttributeData ProjectileCount;
+    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, ProjectileCount)
+
+    UPROPERTY(BlueprintReadOnly, Category = "Survivor")
+    FGameplayAttributeData AreaOfEffect;
+    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, AreaOfEffect)
+
+    UPROPERTY(BlueprintReadOnly, Category = "Survivor")
+    FGameplayAttributeData Cooldown;
+    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, Cooldown)
+
+    UPROPERTY(BlueprintReadOnly, Category = "Survivor")
+    FGameplayAttributeData Duration;
+    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, Duration)
+
+    UPROPERTY(BlueprintReadOnly, Category = "Survivor")
+    FGameplayAttributeData Pierce;
+    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, Pierce)
+
+    UPROPERTY(BlueprintReadOnly, Category = "Survivor")
+    FGameplayAttributeData Lifesteal;
+    ATTRIBUTE_ACCESSORS(UYCRAttributeSet, Lifesteal)
+
+    // =====================================================
+    // Overrides
+    // =====================================================
+    
+    virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
+    virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
+
+protected:
+    // Helper Funktionen
+    void UpdateDerivedAttributes();
+    
+    // Helper für berechnete Werte
+    float GetEffectivePhysicalDamage() const;
+    float GetEffectiveMagicalDamage() const;
+    float GetEffectiveAttackSpeed() const;
 };
