@@ -56,9 +56,13 @@ void UGameInstanceYCR::SaveGameData()
     if (SaveGameInstance)
     {
         SaveGameInstance->SavedProgress = PlayerProgress;
-        UGameplayStatics::SaveGameToSlot(SaveGameInstance, SaveSlotName, UserIndex);
+        SaveGameInstance->LastSaveTime = FDateTime::Now();
         
-        UE_LOG(LogTemp, Log, TEXT("Game progress saved successfully"));
+        if (UGameplayStatics::SaveGameToSlot(SaveGameInstance, SaveSlotName, UserIndex))
+        {
+            UE_LOG(LogTemp, Log, TEXT("Game progress saved successfully at %s"), 
+                *SaveGameInstance->LastSaveTime.ToString());
+        }
     }
 }
 
@@ -72,13 +76,24 @@ void UGameInstanceYCR::LoadGameData()
 
         if (LoadedGame)
         {
-            PlayerProgress = LoadedGame->SavedProgress;
-            UE_LOG(LogTemp, Log, TEXT("Game progress loaded successfully"));
+            // Version check für zukünftige Kompatibilität
+            if (LoadedGame->SaveVersion == 1)
+            {
+                PlayerProgress = LoadedGame->SavedProgress;
+                UE_LOG(LogTemp, Log, TEXT("Game progress loaded successfully from %s"), 
+                    *LoadedGame->LastSaveTime.ToString());
+            }
+            else
+            {
+                UE_LOG(LogTemp, Warning, TEXT("Save file version mismatch. Expected: 1, Got: %d"), 
+                    LoadedGame->SaveVersion);
+            }
         }
     }
     else
     {
         UE_LOG(LogTemp, Log, TEXT("No save game found, using default values"));
+        InitializeDefaultData();
     }
 }
 

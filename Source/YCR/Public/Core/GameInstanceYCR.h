@@ -94,20 +94,27 @@ public:
     virtual void Shutdown() override;
 
     // =====================================================
-    // Save/Load System
+    // Advanced Save/Load Features
     // =====================================================
     
+    /** Get save game metadata without loading full save */
     UFUNCTION(BlueprintCallable, Category = "YCR|SaveGame")
-    void SaveGameData();
-
+    bool GetSaveGameMetadata(FDateTime& OutLastSaveTime, int32& OutSaveVersion);
+    
+    /** Export save to string for cloud saves */
     UFUNCTION(BlueprintCallable, Category = "YCR|SaveGame")
-    void LoadGameData();
-
+    FString ExportSaveToString();
+    
+    /** Import save from string */
     UFUNCTION(BlueprintCallable, Category = "YCR|SaveGame")
-    bool DoesSaveGameExist() const;
-
+    bool ImportSaveFromString(const FString& SaveString);
+    
+    /** Auto-save functionality */
     UFUNCTION(BlueprintCallable, Category = "YCR|SaveGame")
-    void ResetProgress();
+    void EnableAutoSave(float IntervalInSeconds = 300.0f);
+    
+    UFUNCTION(BlueprintCallable, Category = "YCR|SaveGame")
+    void DisableAutoSave();
 
     // =====================================================
     // Run Management
@@ -211,6 +218,12 @@ protected:
 
     UPROPERTY()
     int32 UserIndex = 0;
+
+    /** Auto-save timer handle */
+    FTimerHandle AutoSaveTimerHandle;
+    
+    /** Auto-save callback */
+    void PerformAutoSave();
 
     // Map names for transitions
     TArray<FName> MapProgression = {
