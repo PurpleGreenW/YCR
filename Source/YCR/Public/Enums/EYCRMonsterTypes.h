@@ -2,7 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "EMonsterType.generated.h"
+#include "EYCRMonsterTypes.generated.h"
 
 /**
  * Monster sizes for scaling and gameplay mechanics
@@ -38,7 +38,7 @@ enum class EMonsterRace : uint8
  * Monster types/categories for spawn management
  */
 UENUM(BlueprintType)
-enum class EMonsterType : uint8
+enum class EYCRMonsterTypes : uint8
 {
 	Normal      UMETA(DisplayName = "Normal"),
 	Elite       UMETA(DisplayName = "Elite"),

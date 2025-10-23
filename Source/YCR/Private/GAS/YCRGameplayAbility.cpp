@@ -45,7 +45,7 @@ void UYCRGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, co
     Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
-float UYCRGameplayAbility::CalculateElementalDamageMultiplier(EElementTypes TargetElement) const
+float UYCRGameplayAbility::CalculateElementalDamageMultiplier(EYCRElementTypes TargetElement) const
 {
     // Element effectiveness based on your design:
     // Fire > Wind > Earth > Lightning > Water > Fire
@@ -57,23 +57,23 @@ float UYCRGameplayAbility::CalculateElementalDamageMultiplier(EElementTypes Targ
     // Simplified element matchup - you can expand this based on your full element system
     switch (AbilityElement)
     {
-    case EElementTypes::Fire:
-        if (TargetElement == EElementTypes::Wind) Multiplier = 1.5f;
-        else if (TargetElement == EElementTypes::Water) Multiplier = 0.5f;
+    case EYCRElementTypes::Fire:
+        if (TargetElement == EYCRElementTypes::Wind) Multiplier = 1.5f;
+        else if (TargetElement == EYCRElementTypes::Water) Multiplier = 0.5f;
         break;
         
-    case EElementTypes::Water:
-        if (TargetElement == EElementTypes::Fire) Multiplier = 1.5f;
-        else if (TargetElement == EElementTypes::Wind) Multiplier = 0.5f;
+    case EYCRElementTypes::Water:
+        if (TargetElement == EYCRElementTypes::Fire) Multiplier = 1.5f;
+        else if (TargetElement == EYCRElementTypes::Wind) Multiplier = 0.5f;
         break;
         
-    case EElementTypes::Holy:
-        if (TargetElement == EElementTypes::Shadow) Multiplier = 2.0f;
-        else if (TargetElement == EElementTypes::Undead) Multiplier = 1.5f;
+    case EYCRElementTypes::Holy:
+        if (TargetElement == EYCRElementTypes::Shadow) Multiplier = 2.0f;
+        else if (TargetElement == EYCRElementTypes::Undead) Multiplier = 1.5f;
         break;
         
-    case EElementTypes::Shadow:
-        if (TargetElement == EElementTypes::Holy) Multiplier = 2.0f;
+    case EYCRElementTypes::Shadow:
+        if (TargetElement == EYCRElementTypes::Holy) Multiplier = 2.0f;
         break;
         
     // Add more element matchups as needed

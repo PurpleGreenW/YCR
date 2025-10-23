@@ -2,14 +2,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "YCRStatusEffects.generated.h"
+#include "EYCRStatusEffects.generated.h"
 
 /**
  * Status effects that can be applied to characters
  * Multiple effects can be active simultaneously
  */
 UENUM(BlueprintType, Meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
-enum class EStatusEffect : uint8
+enum class EYCRStatusEffects : uint8
 {
 	None        = 0         UMETA(DisplayName = "None"),
 	Slow        = 1 << 0    UMETA(DisplayName = "Slow"),
@@ -22,7 +22,7 @@ enum class EStatusEffect : uint8
 	Silenced    = 1 << 7    UMETA(DisplayName = "Silenced")
 };
 
-ENUM_CLASS_FLAGS(EYCRStatusEffect);
+ENUM_CLASS_FLAGS(EYCRStatusEffects);
 
 /**
  * Data for a single status effect instance
@@ -33,7 +33,7 @@ struct FYCRStatusEffectData
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EYCRStatusEffect EffectType = EYCRStatusEffect::None;
+	EYCRStatusEffects EffectType = EYCRStatusEffects::None;
     
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Duration = 5.0f;

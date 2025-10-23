@@ -6,9 +6,6 @@
 #include "Engine/World.h"
 #include "Engine/DataTable.h"
 
-// Save game class
-
-
 UGameInstanceYCR::UGameInstanceYCR()
 {
     // Set default values
@@ -17,7 +14,7 @@ UGameInstanceYCR::UGameInstanceYCR()
 void UGameInstanceYCR::Init()
 {
     Super::Init();
-
+    
     // Initialize default data
     InitializeDefaultData();
 
@@ -52,7 +49,7 @@ void UGameInstanceYCR::SaveGameData()
     UYCRSaveGame* SaveGameInstance = Cast<UYCRSaveGame>(
         UGameplayStatics::CreateSaveGameObject(UYCRSaveGame::StaticClass())
     );
-
+    
     if (SaveGameInstance)
     {
         SaveGameInstance->SavedProgress = PlayerProgress;
@@ -109,29 +106,39 @@ void UGameInstanceYCR::ResetProgress()
     SaveGameData();
 }
 
-void UGameInstanceYCR::StartNewRun(const FName& CharacterClass, const TArray<FName>& SelectedCards)
+void UGameInstanceYCR::StartNewRun(const FString& SelectedCharacterClass)
 {
-    CurrentRunData.Reset();
-    CurrentRunData.SelectedCharacterClass = CharacterClass;
-    CurrentRunData.EquippedCards = SelectedCards;
+    // Reset run data
+    CurrentRunData = FCurrentRunData();
+    CurrentRunData.SelectedCharacter = SelectedCharacterClass;
+    CurrentRunData.RunStartTime = FDateTime::Now();
     
-    // Transition to first map
-    TransitionToMap(MapProgression[0]);
+    // Initialize run with character
+    UE_LOG(LogTemp, Log, TEXT("Starting new run with character: %s"), *SelectedCharacterClass);
 }
 
 void UGameInstanceYCR::EndCurrentRun(bool bVictory)
 {
-    // Update progress based on run results
-    PlayerProgress.TotalGold += CurrentRunData.GoldCollected;
+    // Calculate run statistics
+    FTimespan RunDuration = FDateTime::Now() - CurrentRunData.RunStartTime;
     
+    // Update player progress
     if (bVictory)
     {
-        // Check if we unlocked next level
-        if (CurrentRunData.CurrentMapLevel >= PlayerProgress.HighestLevelReached)
+        PlayerProgress.TotalRunsWon++;
+        
+        // Update highest level reached
+        if (CurrentRunData.CurrentLevel > PlayerProgress.HighestLevelReached)
         {
-            PlayerProgress.HighestLevelReached = CurrentRunData.CurrentMapLevel + 1;
+            PlayerProgress.HighestLevelReached = CurrentRunData.CurrentLevel;
         }
     }
+    
+    PlayerProgress.TotalRunsPlayed++;
+    PlayerProgress.TotalMonstersKilled += CurrentRunData.MonstersKilled;
+    PlayerProgress.TotalElitesKilled += CurrentRunData.ElitesKilled;
+    PlayerProgress.TotalBossesKilled += CurrentRunData.BossesKilled;
+    PlayerProgress.TotalGoldCollected += CurrentRunData.GoldCollected;
     
     // Check achievements
     CheckAndUnlockAchievements();
@@ -141,6 +148,46 @@ void UGameInstanceYCR::EndCurrentRun(bool bVictory)
     
     // Return to main menu
     UGameplayStatics::OpenLevel(this, "MainMenu");
+}
+
+void UGameInstanceYCR::CollectCard(const FName& CardName)
+{
+    if (PlayerProgress.CollectedCards.Contains(CardName))
+    {
+        PlayerProgress.CollectedCards[CardName]++;
+    }
+    else
+    {
+        PlayerProgress.CollectedCards.Add(CardName, 1);
+    }
+    
+    UE_LOG(LogTemp, Log, TEXT("Collected card: %s (Total: %d)"), 
+        *CardName.ToString(), PlayerProgress.CollectedCards[CardName]);
+    
+    SaveGameData();
+}
+
+int32 UGameInstanceYCR::GetCardCount(const FName& CardName) const
+{
+    const int32* Count = PlayerProgress.CollectedCards.Find(CardName);
+    return Count ? *Count : 0;
+}
+
+void UGameInstanceYCR::AddEssence(int32 Amount)
+{
+    PlayerProgress.TotalEssence += Amount;
+    SaveGameData();
+}
+
+bool UGameInstanceYCR::SpendEssence(int32 Amount)
+{
+    if (PlayerProgress.TotalEssence >= Amount)
+    {
+        PlayerProgress.TotalEssence -= Amount;
+        SaveGameData();
+        return true;
+    }
+    return false;
 }
 
 void UGameInstanceYCR::UnlockMap(int32 MapLevel)
@@ -176,91 +223,34 @@ bool UGameInstanceYCR::IsCharacterUnlocked(const FName& CharacterClass) const
     return PlayerProgress.UnlockedCharacters.Contains(CharacterClass);
 }
 
-void UGameInstanceYCR::AddCard(const FName& CardName, int32 Count)
+int32 UGameInstanceYCR::GetCharacterAdvancementLevel(const FName& CharacterClass) const
 {
-    if (PlayerProgress.CollectedCards.Contains(CardName))
-    {
-        PlayerProgress.CollectedCards[CardName] += Count;
-    }
-    else
-    {
-        PlayerProgress.CollectedCards.Add(CardName, Count);
-    }
+    const int32* Level = PlayerProgress.UnlockedCharacters.Find(CharacterClass);
+    return Level ? *Level : 0;
 }
 
-int32 UGameInstanceYCR::GetCardCount(const FName& CardName) const
+void UGameInstanceYCR::UnlockAchievement(const FString& AchievementID)
 {
-    const int32* Count = PlayerProgress.CollectedCards.Find(CardName);
-    return Count ? *Count : 0;
-}
-
-void UGameInstanceYCR::AddEssence(int32 Amount)
-{
-    PlayerProgress.TotalEssence += Amount;
-    SaveGameData();
-}
-
-void UGameInstanceYCR::RecordMonsterKill(const FName& MonsterType)
-{
-    CurrentRunData.MonstersKilled++;
-    
-    if (PlayerProgress.MonsterKillCounts.Contains(MonsterType))
+    if (!PlayerProgress.UnlockedAchievements.Contains(AchievementID))
     {
-        PlayerProgress.MonsterKillCounts[MonsterType]++;
-    }
-    else
-    {
-        PlayerProgress.MonsterKillCounts.Add(MonsterType, 1);
+        PlayerProgress.UnlockedAchievements.Add(AchievementID);
+        
+        // Broadcast achievement unlock event
+        OnAchievementUnlocked.Broadcast(AchievementID);
+        
+        UE_LOG(LogTemp, Log, TEXT("Achievement Unlocked: %s"), *AchievementID);
+        SaveGameData();
     }
 }
 
-void UGameInstanceYCR::CheckAndUnlockAchievements()
+bool UGameInstanceYCR::IsAchievementUnlocked(const FString& AchievementID) const
 {
-    // Beispiel Achievement Checks
-    
-    // "First Blood" - Kill 1 monster
-    if (CurrentRunData.MonstersKilled >= 1 && !IsAchievementUnlocked("FirstBlood"))
-    {
-        UnlockAchievement("FirstBlood");
-    }
-    
-    // "Poring Slayer" - Kill 100 Porings
-    const int32* PoringKills = PlayerProgress.MonsterKillCounts.Find("Poring");
-    if (PoringKills && *PoringKills >= 100 && !IsAchievementUnlocked("PoringSlayer"))
-    {
-        UnlockAchievement("PoringSlayer");
-        AddEssence(50); // Reward
-    }
-    
-    // "Speed Runner" - Complete level in under 5 minutes
-    if (CurrentRunData.RunTime < 300.0f && !IsAchievementUnlocked("SpeedRunner"))
-    {
-        UnlockAchievement("SpeedRunner");
-        AddEssence(100);
-    }
+    return PlayerProgress.UnlockedAchievements.Contains(AchievementID);
 }
 
-void UGameInstanceYCR::UnlockAchievement(const FName& AchievementID)
+TArray<FString> UGameInstanceYCR::GetUnlockedAchievements() const
 {
-    PlayerProgress.CompletedAchievements.Add(AchievementID, true);
-    
-    // TODO: Show achievement popup
-    UE_LOG(LogTemp, Log, TEXT("Achievement Unlocked: %s"), *AchievementID.ToString());
-}
-
-bool UGameInstanceYCR::IsAchievementUnlocked(const FName& AchievementID) const
-{
-    const bool* IsUnlocked = PlayerProgress.CompletedAchievements.Find(AchievementID);
-    return IsUnlocked && *IsUnlocked;
-}
-
-void UGameInstanceYCR::TransitionToNextLevel()
-{
-    CurrentRunData.CurrentMapLevel++;
-    
-    // For now, just alternate between DevMap_01 and DevMap_02
-    int32 MapIndex = (CurrentRunData.CurrentMapLevel - 1) % MapProgression.Num();
-    TransitionToMap(MapProgression[MapIndex]);
+    return PlayerProgress.UnlockedAchievements.Array();
 }
 
 void UGameInstanceYCR::TransitionToMap(const FName& MapName)
@@ -274,11 +264,100 @@ void UGameInstanceYCR::OnPreLoadMap(const FString& MapName)
     UE_LOG(LogTemp, Log, TEXT("Transitioning to map: %s"), *MapName);
 }
 
-void UGameInstanceYCR::OnPostLoadMap(UWorld* LoadedWorld)
+void UGameInstanceYCR::OnPostLoadMap(UWorld* World)
 {
-    // Restore run state after transition
-    if (LoadedWorld)
+    if (!World)
     {
-        UE_LOG(LogTemp, Log, TEXT("Map loaded: %s"), *LoadedWorld->GetMapName());
+        return;
     }
+    
+    // Restore any necessary state after map load
+    UE_LOG(LogTemp, Log, TEXT("Map loaded: %s"), *World->GetMapName());
+}
+
+void UGameInstanceYCR::CheckAndUnlockAchievements()
+{
+    // Beispiel Achievement Checks
+    
+    // "First Blood" - Kill 1 monster
+    if (CurrentRunData.MonstersKilled >= 1 && !IsAchievementUnlocked("FirstBlood"))
+    {
+        UnlockAchievement("FirstBlood");
+    }
+    
+    // "Monster Hunter" - Kill 100 monsters in one run
+    if (CurrentRunData.MonstersKilled >= 100 && !IsAchievementUnlocked("MonsterHunter"))
+    {
+        UnlockAchievement("MonsterHunter");
+    }
+    
+    // "Elite Slayer" - Kill 10 elites in one run
+    if (CurrentRunData.ElitesKilled >= 10 && !IsAchievementUnlocked("EliteSlayer"))
+    {
+        UnlockAchievement("EliteSlayer");
+    }
+    
+    // "Boss Killer" - Kill your first boss
+    if (CurrentRunData.BossesKilled >= 1 && !IsAchievementUnlocked("BossKiller"))
+    {
+        UnlockAchievement("BossKiller");
+    }
+    
+    // "Rich" - Collect 1000 gold in one run
+    if (CurrentRunData.GoldCollected >= 1000 && !IsAchievementUnlocked("Rich"))
+    {
+        UnlockAchievement("Rich");
+    }
+    
+    // "Speedrunner" - Complete a level in under 5 minutes
+    FTimespan RunTime = FDateTime::Now() - CurrentRunData.RunStartTime;
+    if (RunTime.GetTotalMinutes() < 5.0 && CurrentRunData.CurrentLevel > 1 && 
+        !IsAchievementUnlocked("Speedrunner"))
+    {
+        UnlockAchievement("Speedrunner");
+    }
+    
+    // Total progress achievements
+    if (PlayerProgress.TotalMonstersKilled >= 1000 && !IsAchievementUnlocked("Exterminator"))
+    {
+        UnlockAchievement("Exterminator");
+    }
+    
+    if (PlayerProgress.TotalRunsWon >= 10 && !IsAchievementUnlocked("Veteran"))
+    {
+        UnlockAchievement("Veteran");
+    }
+}
+
+// Getter Methods for UI/Stats
+int32 UGameInstanceYCR::GetTotalEssence() const
+{
+    return PlayerProgress.TotalEssence;
+}
+
+const FPlayerProgressData& UGameInstanceYCR::GetPlayerProgress() const
+{
+    return PlayerProgress;
+}
+
+const FCurrentRunData& UGameInstanceYCR::GetCurrentRunData() const
+{
+    return CurrentRunData;
+}
+
+void UGameInstanceYCR::UpdateRunStats(int32 MonstersKilled, int32 ElitesKilled, 
+    int32 BossesKilled, int32 GoldCollected)
+{
+    CurrentRunData.MonstersKilled += MonstersKilled;
+    CurrentRunData.ElitesKilled += ElitesKilled;
+    CurrentRunData.BossesKilled += BossesKilled;
+    CurrentRunData.GoldCollected += GoldCollected;
+    
+    // Broadcast currency change if needed
+    OnCurrencyChanged.Broadcast(CurrentRunData.GoldCollected);
+}
+
+void UGameInstanceYCR::SetCurrentLevel(int32 Level)
+{
+    CurrentRunData.CurrentLevel = Level;
 }

@@ -1,13 +1,13 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "EElementTypes.generated.h"
+#include "EYCRElementTypes.generated.h"
 
 /**
  * Element types for damage calculation
  */
 UENUM(BlueprintType)
-enum class EElementTypes : uint8
+enum class EYCRElementTypes : uint8
 {
 	Neutral     UMETA(DisplayName = "Neutral"),
 	Water       UMETA(DisplayName = "Water"),
@@ -18,5 +18,7 @@ enum class EElementTypes : uint8
 	Holy        UMETA(DisplayName = "Holy"),
 	Shadow      UMETA(DisplayName = "Shadow"),
 	Ghost       UMETA(DisplayName = "Ghost"),
-	Undead      UMETA(DisplayName = "Undead")
+	Undead      UMETA(DisplayName = "Undead"),
+    
+	MAX         UMETA(Hidden)
 };

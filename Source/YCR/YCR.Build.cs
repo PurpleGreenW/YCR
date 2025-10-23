@@ -111,7 +111,8 @@ public class YCR : ModuleRules
             "YCR/Public/Enemies", 
             "YCR/Public/Utils",
             "YCR/Public/Utils/Enums",
-            "YCR/Public/Utils/Interfaces"
+            "YCR/Public/Utils/Interfaces",
+            "YCR/Public/Data",
         });
         
         // =====================================================

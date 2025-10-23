@@ -1,13 +1,13 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "EItemRarity.generated.h"
+#include "EYCRItemRarity.generated.h"
 
 /**
  * Item rarity tiers
  */
 UENUM(BlueprintType)
-enum class EItemRarity : uint8
+enum class EYCRItemRarity : uint8
 {
 	Common      UMETA(DisplayName = "Common"),
 	Uncommon    UMETA(DisplayName = "Uncommon"),

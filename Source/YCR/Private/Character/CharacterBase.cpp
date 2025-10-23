@@ -6,7 +6,7 @@
 #include "YCR/Public/GAS/YCRGameplayAbility.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "YCR/Public/Enums/EElementTypes.h"
+#include "YCR/Public/Enums/EYCRElementTypes.h"
 #include "AbilitySystemBlueprintLibrary.h"
 
 ACharacterBase::ACharacterBase()
@@ -23,7 +23,7 @@ ACharacterBase::ACharacterBase()
 
     // Default values
     CharacterLevel = 1;
-    CharacterElement = EElementTypes::Neutral;
+    CharacterElement = EYCRElementTypes::Neutral;
     bIsDead = false;
 
     // Configure character movement (Survivor-style)

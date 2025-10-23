@@ -11,7 +11,7 @@ class UYCRAbilitySystemComponent;
 class UYCRAttributeSet;
 class UGameplayEffect;
 class UGameplayAbility;
-enum class EElementTypes : uint8;
+enum class EYCRElementTypes : uint8;
 
 /**
  * Base character class for all characters in YCR
@@ -68,7 +68,7 @@ protected:
 
     /** Character's element type for damage calculations */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YCR|Stats")
-    EElementTypes CharacterElement;
+    EYCRElementTypes CharacterElement;
 
     /** Is this character dead? */
     UPROPERTY(BlueprintReadOnly, Category = "YCR|Stats")
