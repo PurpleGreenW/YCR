@@ -3,15 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "EYCRJobClasses.generated.h"
+#include "EYCRCharacterClasses.generated.h"
 
 /**
  * Alle verfügbaren Job-Klassen
  */
 UENUM(BlueprintType)
-enum class EYCRJobClasses : uint8
+enum class EYCRCharacterClasses : uint8
 {
 	None            UMETA(DisplayName = "None"),
+
+	//Starter Klasse
+	Novice           UMETA(DisplayName = "Novice"),
     
 	// Basis Klassen
 	Swordsman       UMETA(DisplayName = "Swordsman"),

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
 #include "CharacterAttributeData.h"
-#include "YCR/Public/Enums/EYCRJobClasses.h"
+#include "YCR/Public/Enums/EYCRCharacterClasses.h"
 #include "YCR/Public/Enums/EYCRElementTypes.h"
 #include "JobClassData.generated.h"
 

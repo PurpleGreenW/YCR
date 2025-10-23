@@ -1,4 +1,5 @@
 ﻿// YCRSaveGame.cpp
+
 #include "YCR/Public/Core/YCRSaveGame.h"
 
 UYCRSaveGame::UYCRSaveGame()

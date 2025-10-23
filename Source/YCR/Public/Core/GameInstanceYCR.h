@@ -5,49 +5,13 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "Engine/DataTable.h"
+#include "Data/YCRSaveGameData.h"
 #include "GameInstanceYCR.generated.h"
 
 // Forward declarations
 class UYCRSaveGame;
 
-USTRUCT(BlueprintType)
-struct FCurrentRunData
-{
-    GENERATED_BODY()
-    
-    UPROPERTY(BlueprintReadWrite)
-    FString SelectedCharacter = "Swordsman";
-    
-    UPROPERTY(BlueprintReadWrite)
-    int32 CurrentMapLevel = 1;
-    
-    UPROPERTY(BlueprintReadWrite)
-    float RunTime = 0.0f;
-    
-    UPROPERTY(BlueprintReadWrite)
-    int32 MonstersKilled = 0;
-    
-    UPROPERTY(BlueprintReadWrite)
-    int32 ElitesKilled = 0;
-    
-    UPROPERTY(BlueprintReadWrite)
-    int32 BossesKilled = 0;
-    
-    UPROPERTY(BlueprintReadWrite)
-    int32 GoldCollected = 0;
-    
-    UPROPERTY(BlueprintReadWrite)
-    TArray<int32> EquippedCards;
-    
-    void Reset()
-    {
-        CurrentMapLevel = 1;
-        RunTime = 0.0f;
-        MonstersKilled = 0;
-        GoldCollected = 0;
-        EquippedCards.Empty();
-    }
-};
+
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCurrencyChanged, int32, NewAmount);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAchievementUnlocked, const FString&, AchievementID);
