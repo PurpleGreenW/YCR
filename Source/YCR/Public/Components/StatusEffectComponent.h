@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "YCR/Public/Enums/EYCRElementTypes.h"
+#include "YCR/Public/Enums/EYCRElements.h"
 #include "StatusEffectComponent.generated.h"
 
 USTRUCT(BlueprintType)
@@ -23,7 +23,7 @@ struct FStatusEffect
 	float SlowPercent;
     
 	UPROPERTY(BlueprintReadWrite)
-	EYCRElementTypes ElementType = EYCRElementTypes::Neutral;
+	EYCRElementType ElementType = EYCRElementType::Neutral;
 };
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))

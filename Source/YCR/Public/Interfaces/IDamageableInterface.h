@@ -5,7 +5,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "YCR/Public/Enums/EYCRElementTypes.h"
+#include "YCR/Public/Enums/EYCRElements.h"
 #include "IDamageableInterface.generated.h"
 
 // Forward declarations
@@ -35,7 +35,7 @@ public:
      * Apply elemental damage with type effectiveness
      */
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "YCR|Damage")
-    float ReceiveElementalDamage(float DamageAmount, EYCRElementTypes DamageElement,
+    float ReceiveElementalDamage(float DamageAmount, EYCRElementType DamageElement,
                                 AController* EventInstigator, AActor* DamageCauser);
 
     /**
@@ -66,7 +66,7 @@ public:
      * Get the element type of this entity
      */
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "YCR|Damage")
-    EYCRElementTypes GetElementType() const;
+    EYCRElementType GetElementType() const;
 
     /**
      * Can this entity be damaged?
@@ -84,7 +84,7 @@ public:
      * Event called after damage is applied (already BlueprintImplementableEvent - keep as is)
      */
     UFUNCTION(BlueprintImplementableEvent, Category = "YCR|Damage")
-    void OnDamageReceived(float DamageDealt, EYCRElementTypes DamageElement,
+    void OnDamageReceived(float DamageDealt, EYCRElementType DamageElement,
                          AController* EventInstigator, AActor* DamageCauser);
 
     /**

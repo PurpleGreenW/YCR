@@ -6,7 +6,7 @@
 #include "Engine/DataTable.h"
 #include "CharacterAttributeData.h"
 #include "YCR/Public/Enums/EYCRCharacterClasses.h"
-#include "YCR/Public/Enums/EYCRElementTypes.h"
+#include "YCR/Public/Enums/EYCRElements.h"
 #include "CharacterClassData.generated.h"
 
 /**

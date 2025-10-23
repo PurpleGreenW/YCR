@@ -1,29 +1,68 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
-#include  "YCR/Public/Character/CharacterBase.h"
+#include "Character/CharacterBase.h"
+#include "Interfaces/IEnemyInterface.h"
+#include "Enums/EYCRMonsterTypes.h"
+#include "Enums/EYCRSize.h"
+#include "Enums/EYCRElements.h"
 #include "EnemyBase.generated.h"
 
 UCLASS()
-class YCR_API AEnemyBase : public ACharacterBase
+class YCR_API AEnemyBase : public ACharacterBase, public IEnemyInterface
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
-	AEnemyBase();
+    AEnemyBase();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+    virtual void BeginPlay() override;
+    virtual void PossessedBy(AController* NewController) override;
+
+    // Enemy-specific properties
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy")
+    EYCRMonsterType MonsterType;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy")
+    FName MonsterID;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy|Stats")
+    float BaseExperienceReward;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy|Stats")
+    float BaseGoldDrop;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy|Stats")
+    float AggroRange;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy|Stats")
+    float AttackRange;
+
+    // Monster Size (affects stats and knockback)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy|Stats")
+    EYCRSize MonsterSize;
+
+    // AI Component
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy|AI")
+    class UYCREnemyAIComponent* EnemyAIComponent;
 
 public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+    // IEnemyInterface implementation
+    virtual float GetExperienceReward() const override { return BaseExperienceReward; }
+    virtual float GetGoldDrop() const override { return BaseGoldDrop; }
+    virtual EYCRMonsterType GetMonsterType() const override { return MonsterType; }
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+    // Enemy-specific functions
+    UFUNCTION(BlueprintCallable, Category = "Enemy")
+    void InitializeMonsterStats(const struct FYCRMonsterData& MonsterData);
+
+protected:
+    // Override CharacterBase functions
+    virtual void InitializeAttributes() override;
+    virtual void OnDeath() override;
+
+    // Apply monster-specific stat modifiers
+    void ApplyMonsterTypeModifiers();
+    void ApplySizeModifiers();
 };

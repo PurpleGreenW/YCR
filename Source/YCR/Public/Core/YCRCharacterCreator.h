@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "YCR/Public/Enums/EYCRCharacterClasses.h"
-#include "YCR/Public/Enums/EYCRElementTypes.h"
+#include "YCR/Public/Enums/EYCRElements.h"
 #include "Engine/DataTable.h"
 #include "YCRCharacterCreator.generated.h"
 
@@ -52,7 +52,7 @@ struct FYCRCharacterCreationData : public FTableRowBase
 
     /** Starting element affinity */
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character")
-    EYCRElementTypes ElementAffinity = EYCRElementTypes::Neutral;
+    EYCRElementType ElementAffinity = EYCRElementType::Neutral;
 
     /** Skeletal mesh for this class */
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visuals")
@@ -70,7 +70,7 @@ struct FYCRCharacterCreationData : public FTableRowBase
     {
         BaseHealth = 100.0f;
         BaseMoveSpeed = 400.0f;
-        ElementAffinity = EYCRElementTypes::Neutral;
+        ElementAffinity = EYCRElementType::Neutral;
     }
 };
 

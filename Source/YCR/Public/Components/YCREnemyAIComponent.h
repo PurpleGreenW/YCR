@@ -4,18 +4,20 @@
 #include "Components/ActorComponent.h"
 #include "YCREnemyAIComponent.generated.h"
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(AI), meta=(BlueprintSpawnableComponent))
 class YCR_API UYCREnemyAIComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:
+public:	
 	UYCREnemyAIComponent();
 
 protected:
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, 
-							  FActorComponentTickFunction* ThisTickFunction) override;
+	// Component lifecycle
+	virtual void BeginPlay() override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	// AI Properties
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AI")
 	float MoveSpeed = 300.0f;
 
@@ -32,6 +34,9 @@ private:
 	UPROPERTY()
 	class ACharacterPlayer* TargetPlayer;
 
+	// AI behavior methods
 	void MoveTowardsPlayer(float DeltaTime);
 	void CheckAttackRange();
+	void FindTargetPlayer();
+	void ApplyContactDamage();
 };

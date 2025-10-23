@@ -1,13 +1,13 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "EYCRElementTypes.generated.h"
+#include "EYCRElements.generated.h"
 
 /**
  * Element types for damage calculation
  */
 UENUM(BlueprintType)
-enum class EYCRElementTypes : uint8
+enum class EYCRElementType : uint8
 {
 	Neutral     UMETA(DisplayName = "Neutral"),
 	Water       UMETA(DisplayName = "Water"),
@@ -21,4 +21,19 @@ enum class EYCRElementTypes : uint8
 	Undead      UMETA(DisplayName = "Undead"),
     
 	MAX         UMETA(Hidden)
+};
+
+
+/**
+ * Element level for monsters (1-4)
+ * Higher levels = stronger element affinity
+ */
+UENUM(BlueprintType)
+enum class EYCRElementLevel : uint8
+{
+	Level1 UMETA(DisplayName = "Level 1"),     // 25% element
+	Level2 UMETA(DisplayName = "Level 2"),     // 50% element
+	Level3 UMETA(DisplayName = "Level 3"),     // 75% element
+	Level4 UMETA(DisplayName = "Level 4"),     // 100% element
+	MAX UMETA(Hidden)
 };

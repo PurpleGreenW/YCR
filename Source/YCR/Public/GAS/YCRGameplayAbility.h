@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
-#include "YCR/Public/Enums/EYCRElementTypes.h"
+#include "YCR/Public/Enums/EYCRElements.h"
 #include "YCRGameplayAbility.generated.h"
 
 /**
@@ -25,7 +25,7 @@ public:
     
     /** Element type of this ability for damage calculations */
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "YCR|Ability")
-    EYCRElementTypes AbilityElement = EYCRElementTypes::Neutral;
+    EYCRElementType AbilityElement = EYCRElementType::Neutral;
     
     /** Base damage multiplier for this ability */
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "YCR|Ability", meta = (ClampMin = "0.1", ClampMax = "10.0"))
@@ -60,7 +60,7 @@ public:
     
     /** Calculate damage based on element matchup */
     UFUNCTION(BlueprintCallable, Category = "YCR|Ability")
-    float CalculateElementalDamageMultiplier(EYCRElementTypes TargetElement) const;
+    float CalculateElementalDamageMultiplier(EYCRElementType TargetElement) const;
     
     /** Get rarity multiplier based on current rarity level */
     UFUNCTION(BlueprintCallable, Category = "YCR|Ability")
