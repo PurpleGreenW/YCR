@@ -7,13 +7,13 @@
 #include "CharacterAttributeData.h"
 #include "YCR/Public/Enums/EYCRCharacterClasses.h"
 #include "YCR/Public/Enums/EYCRElementTypes.h"
-#include "JobClassData.generated.h"
+#include "CharacterClassData.generated.h"
 
 /**
  * DataTable Struktur für Job-Klassen Definitionen
  */
 USTRUCT(BlueprintType)
-struct FJobClassData : public FTableRowBase
+struct FCharacterClassData : public FTableRowBase
 {
     GENERATED_BODY()
 
